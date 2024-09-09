@@ -117,11 +117,11 @@ def main():
 
     for ref_img in loader:
         # Forward measurement model
-        print(f"ref_img: {ref_img.min()}, {ref_img.max()}")
+        # print(f"ref_img: {ref_img.min()}, {ref_img.max()}")
         y = operator.forward(ref_img.to(dist_util.dev()))
-        print(f"y: {y.min()}, {y.max()}")
+        # print(f"y: {y.min()}, {y.max()}")
         y_n = noiser(y)
-        print(f"noisy y: {y_n.min()}, {y_n.max()}")
+        # print(f"noisy y: {y_n.min()}, {y_n.max()}")
 
         condition_args['y_n'] = y_n
         if task_config['measurement']['operator']['name'] != 'ct':

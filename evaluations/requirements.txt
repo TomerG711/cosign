@@ -1,4 +1,4 @@
-tensorflow-gpu>=2.0
+tensorflow==2.8
 scipy
 requests
 tqdm

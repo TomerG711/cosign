@@ -70,8 +70,8 @@ class LSUNDataset(VisionDataset):
     def __getitem__(self, index: int):
         fpath = self.fpaths[index]
         img = Image.open(fpath).convert('RGB')
-        a = img.getextrema()
-        print(a)
+        # a = img.getextrema()
+        # print(a)
         if self.transforms is not None:
             img = self.transforms(img)
         

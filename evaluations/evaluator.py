@@ -13,7 +13,7 @@ from typing import Iterable, Optional, Tuple
 
 import numpy as np
 import requests
-# import tensorflow.compat.v1 as tf
+import tensorflow.compat.v1 as tf
 from scipy import linalg
 from tqdm.auto import tqdm
 
@@ -51,7 +51,7 @@ def main():
     ref_stats, ref_stats_spatial = evaluator.read_statistics(args.ref_batch, ref_acts)
 
     print("computing sample batch activations...")
-    if args.task:   #CC
+    if args.task and args.task == 'ct_recon':   #CC
         sample_acts = evaluator.read_activations_cc(args.sample_batch)
     else:   #CM, EDM
         sample_acts = evaluator.read_activations(args.sample_batch)
@@ -67,7 +67,6 @@ def main():
     prec, recall = evaluator.compute_prec_recall(ref_acts[0], sample_acts[0])
     print("Precision:", prec)
     print("Recall:", recall)
-
 
 class InvalidFIDException(Exception):
     pass
