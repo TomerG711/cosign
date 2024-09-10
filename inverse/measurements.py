@@ -107,8 +107,8 @@ class InpaintingOperator(LinearOperator):
 
         # get a drawing context for the image
         draw = ImageDraw.Draw(img)
-        # draw.rectangle((64, 64, 192, 192), fill=(0, 0, 0))
-        draw.rectangle((128, 128, 200, 200), fill=(0, 0, 0))
+        draw.rectangle((64, 64, 192, 192), fill=(0, 0, 0))
+        # draw.rectangle((128, 128, 200, 200), fill=(0, 0, 0))
 
         # convert the image to a numpy array
         img_np = np.array(img)
