@@ -27,6 +27,32 @@ from inverse.condition_methods import get_conditioning_method
 from cc.valid_datasets import get_dataset, get_dataloader
 
 
+
+def median_inpainting(y, mask):
+    print("calculating median")
+    y = y.reshape(3, 256, 256)  # Reshape from (1, -1)
+    mask = mask.reshape(3, 256, 256)
+    y_np = y.cpu().numpy()
+    mask_np = mask.cpu().numpy()
+    C, M, N = y_np.shape
+    y0_median = np.copy(y_np)
+    y0_median[mask_np == 0.0] = np.nan
+    win_size = 1
+    bitmap_NaN = np.isnan(y0_median)
+    while np.count_nonzero(bitmap_NaN) > 0:
+        y0_median_prev = np.copy(y0_median)
+        win_size = win_size + 1
+        _, rows, cols= np.where(bitmap_NaN)
+        for i in range(len(cols)):
+            row_start = max([1, rows[i] - win_size])
+            row_end = min([M, rows[i] + win_size])
+            col_start = max([1, cols[i] - win_size])
+            col_end = min([N, cols[i] + win_size])
+            median_val = np.nanmedian(y0_median_prev[:, row_start:row_end, col_start:col_end], axis=(1,2))
+            y0_median[:, rows[i], cols[i]] = median_val
+        bitmap_NaN = np.isnan(y0_median)
+    return th.tensor(y0_median).to(y.device).reshape(1, 3, 256, 256)
+
 def load_yaml(file_path: str) -> dict:
     with open(file_path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
@@ -126,7 +152,9 @@ def main():
         condition_args['y_n'] = y_n
         if task_config['measurement']['operator']['name'] != 'ct':
             if isinstance(operator, LinearOperator) is True:
-                condition_args['hint'] = operator.transpose(y_n)
+                # condition_args['hint'] = operator.transpose(y_n)
+                # print(condition_args['hint'].shape)
+                condition_args['hint'] = median_inpainting(y_n, operator.mask)
             else:
                 condition_args['hint'] = y_n
         else:

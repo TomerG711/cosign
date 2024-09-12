@@ -102,21 +102,34 @@ class InpaintingOperator(LinearOperator):
     
     def get_mask(self, data):
         image_size = data.shape[-1]
-        # create a blank image with a white background
-        img = Image.new("RGB", (image_size, image_size), color="white")
+        # # create a blank image with a white background
+        # img = Image.new("RGB", (image_size, image_size), color="white")
+        #
+        # # get a drawing context for the image
+        # draw = ImageDraw.Draw(img)
+        # draw.rectangle((64, 64, 192, 192), fill=(0, 0, 0))
+        # # draw.rectangle((128, 128, 200, 200), fill=(0, 0, 0))
+        #
+        # # convert the image to a numpy array
+        # img_np = np.array(img)
+        # img_np = img_np.transpose(2, 0, 1)
+        # img_th = torch.from_numpy(img_np).to(self.device)
+        #
+        # mask = torch.zeros(*data.shape, device=self.device)
+        # mask[:, img_th > 0.5] = 1.0
+        np.random.seed(1234)
+        mask_np = np.ones((image_size, image_size))  # Start with all pixels unmasked (1 = unmasked)
+        num_masked_pixels = int(0.8 * image_size * image_size)
+        mask_indices = np.random.choice(image_size * image_size, num_masked_pixels, replace=False)
+        mask_np = mask_np.flatten()
+        mask_np[mask_indices] = 0  # Mask 90% of the pixels (0 = masked)
+        mask_np = mask_np.reshape(image_size, image_size)
 
-        # get a drawing context for the image
-        draw = ImageDraw.Draw(img)
-        draw.rectangle((64, 64, 192, 192), fill=(0, 0, 0))
-        # draw.rectangle((128, 128, 200, 200), fill=(0, 0, 0))
+        # Convert the mask to torch tensor and apply to the data
+        mask_th = torch.from_numpy(mask_np).unsqueeze(0).to(self.device)  # Shape [1, H, W]
 
-        # convert the image to a numpy array
-        img_np = np.array(img)
-        img_np = img_np.transpose(2, 0, 1)
-        img_th = torch.from_numpy(img_np).to(self.device)
-
-        mask = torch.zeros(*data.shape, device=self.device)
-        mask[:, img_th > 0.5] = 1.0
+        # Expand the mask to match the shape of the data (e.g., 3 channels)
+        mask = mask_th.expand_as(torch.zeros(*data.shape, device=self.device)).float()
         return mask
 
 @register_operator(name='super_resolution')

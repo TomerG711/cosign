@@ -19,7 +19,7 @@ export DATA_DIR=/opt/cosign/results
 ######## Default Values ###########
 total_training_steps=50000
 # for inference, batch_size should an exact divisor of size of the validation set
-batch_size=4
+batch_size=1
 wandb_api_key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 wandb_user=YOUR_WANDB_USERNAME
 

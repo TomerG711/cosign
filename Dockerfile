@@ -17,10 +17,10 @@ WORKDIR /opt/cosign
 #RUN pip install matplotlib
 #RUN pip install -r /opt/cosign/evaluations/requirements.txt
 #RUN pip install --upgrade "protobuf<=3.20.1"
-
+#
 #CMD ./launch.sh -t super_resolution -s sample_cc --control_net_ckpt /opt/cosign/control_net_ckpt/super_resolution.pt
-#CMD ./launch.sh -t inpainting -s sample_cc --control_net_ckpt /opt/cosign/control_net_ckpt/inpaint.pt --ts 0,17,39 --hard_constraint
-CMD sleep infinity
-
+CMD ./launch.sh -t inpainting -s sample_cc --control_net_ckpt /opt/cosign/control_net_ckpt/inpaint.pt --ts 0,17,39 --hard_constraint
+#CMD sleep infinity
+# inpainting 0 single step: 20.24 / 0.380
 #python evaluations/evaluator.py /opt/cosign/datasets/lsun_val/VIRTUAL_lsun_bedroom256.npz /opt/cosign/logs/sample_cc-inpainting/samples_300x256x256x3.npz inpaint
 
